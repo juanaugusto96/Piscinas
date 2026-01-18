@@ -60,5 +60,9 @@ if (scrollGallery && photos.length > 0) {
     if (i === 3) {
        tl.to(text2, { opacity: 1, scale: 1.2, duration: 2.5, ease: "power2.out" }, "<");
     }
+    if (i === 5) {
+      tl.to(text2, { opacity: 0, scale: 0.5, duration: 2, ease: "power2.in" }, "<");
+   }
+
   });
 }
