@@ -1,68 +1,80 @@
+// Registrar plugin ScrollTrigger
 gsap.registerPlugin(ScrollTrigger);
 
+// Seleccionar elementos
 const scrollGallery = document.querySelector(".scroll-gallery");
 const photos = gsap.utils.toArray(".scroll-photo");
 const text1 = document.querySelector(".floating-text");
 const text2 = document.querySelector(".floating-text-2");
 
 if (scrollGallery && photos.length > 0) {
-  
-  // 1. Configuración Inicial de FOTOS
-  gsap.set(photos, { opacity: 0, zIndex: 1 });
-  gsap.set(photos[0], { opacity: 1, zIndex: 2 });
-  
-  // 2. Configuración Inicial de TEXTOS (Centrado Perfecto)
-  // Usamos left/top 50% y xPercent/yPercent -50 para un centrado a prueba de balas
-  gsap.set([text1, text2], { 
-      left: "50%", 
-      top: "50%", 
-      xPercent: -50, 
-      yPercent: -50, 
-      opacity: 0, 
-      scale: 0.5,
-      position: "absolute" // Aseguramos position absolute desde JS
-  }); 
+    // Asegurar que haya suficiente altura para scrollear (además del pin)
+    scrollGallery.style.minHeight = `${Math.max(3, photos.length + 1) * 100}vh`;
 
-  // 3. Línea de Tiempo
-  const tl = gsap.timeline({
-    scrollTrigger: {
-      trigger: scrollGallery,
-      start: "top top",
-      end: () => "+=" + (photos.length * 100) + "%", 
-      scrub: 1, // Un poco más de suavidad
-      pin: true,
-    },
-  });
+    // Configuración inicial: solo la primera foto visible
+    gsap.set(photos, { opacity: 0, zIndex: 1, z: 0, scale: 1, transformOrigin: "50% 50%", force3D: true });
+    gsap.set(photos[0], { opacity: 1, zIndex: 2 });
 
-  // 4. El Bucle
-  photos.forEach((photo, i) => {
-    if (i === 0) return; 
-
-    const prevPhoto = photos[i - 1];
-
-    // Transición de fotos
-    tl.to(prevPhoto, { opacity: 0, duration: 2 })
-      .to(photo, { opacity: 1, zIndex: 2, duration: 2 }, "<");
-
-    // --- CONTROL DE TEXTOS ---
-    
-    // Foto 2 (i=1): Aparece Text 1
-    if (i === 1) {
-       tl.to(text1, { opacity: 1, scale: 1.2, duration: 2.5, ease: "power2.out" }, "<");
+    // Configuración inicial de textos (centrado perfecto)
+    if (text1 || text2) {
+        gsap.set([text1, text2], {
+            left: "50%",
+            top: "50%",
+            xPercent: -50,
+            yPercent: -50,
+            opacity: 0,
+            scale: 0.6,
+            force3D: true
+        });
     }
 
-    // Foto 3 (i=2): Se va Text 1
-    if (i === 2) {
-       tl.to(text1, { opacity: 0, scale: 0.5, duration: 2, ease: "power2.in" }, "<");
-    }
+    // Crear timeline con ScrollTrigger
+    const tl = gsap.timeline({
+        scrollTrigger: {
+            trigger: scrollGallery,
+            start: "top top",
+            end: () => `+=${photos.length * 100}%`,
+            scrub: 1,
+            pin: true,
+            anticipatePin: 1
+        }
+    });
 
-    // Foto 4 (i=3): Aparece Text 2
-    if (i === 3) {
-       tl.to(text2, { opacity: 1, scale: 1.2, duration: 2.5, ease: "power2.out" }, "<");
-    }
-    if (i === 5) {
-      tl.to(text2, { opacity: 0, scale: 0.5, duration: 2, ease: "power2.in" }, "<");
-   }
+    // Transiciones entre fotos
+    photos.forEach((photo, i) => {
+        if (i === 0) return;
 
-  });
+        const prevPhoto = photos[i - 1];
+
+        // Foto anterior: sale hacia el usuario (eje Z) y se desvanece
+        // Foto actual: aparece al mismo tiempo (sin botones, ligado al scroll)
+        tl.to(prevPhoto, {
+            zIndex: 1,
+            z: 450,
+            scale: 1.08,
+            opacity: 0,
+            duration: 1.5,
+            ease: "power2.inOut"
+        })
+        .fromTo(photo,
+            { zIndex: 2, opacity: 0, z: -150, scale: 0.98 },
+            { opacity: 1, z: 0, scale: 1, duration: 1.5, ease: "power2.inOut" },
+            "<"
+        );
+
+        // Textos flotantes (en algunas fotos)
+        // Nota: índices empiezan en 0. Ajustá si querés que aparezcan en otras.
+        if (i === 1 && text1) {
+            tl.to(text1, { opacity: 1, scale: 1.1, duration: 1.2, ease: "power2.out" }, "<");
+        }
+        if (i === 2 && text1) {
+            tl.to(text1, { opacity: 0, scale: 0.7, duration: 1.0, ease: "power2.in" }, "<");
+        }
+        if (i === 4 && text2) {
+            tl.to(text2, { opacity: 1, scale: 1.1, duration: 1.2, ease: "power2.out" }, "<");
+        }
+        if (i === 7 && text2) {
+            tl.to(text2, { opacity: 0, scale: 0.7, duration: 1.0, ease: "power2.in" }, "<");
+        }
+    });
 }

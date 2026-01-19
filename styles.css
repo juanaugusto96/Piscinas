@@ -1,21 +1,80 @@
-/* ... TUS ESTILOS ANTERIORES (Navbar, body, etc) ... */
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Segoe UI', sans-serif; background: #000000; color: #ffffff; min-height: 100vh; }
-.navbar { position: fixed; top: 0; left: 0; width: 100%; padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; z-index: 1000; background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
-.logo { font-size: 1.5rem; font-weight: bold; color: #fff; }
-.nav-links { list-style: none; display: flex; gap: 30px; align-items: center; }
-.nav-links a { text-decoration: none; color: #fff; font-size: 1rem; transition: color 0.3s; }
-.nav-links a:hover { color: #00bcd4; }
-.btn-contacto { border: 1px solid #fff; padding: 8px 20px; border-radius: 20px; transition: all 0.3s; }
-.btn-contacto:hover { background: #fff; color: #000 !important; }
-.main-header { text-align: center; padding: 40px 20px 20px; }
-.title { font-size: 2.5rem; letter-spacing: 2px; }
-.subtitle { font-size: 1rem; color: #cccccc; margin-top: 10px; }
+/* Reset y Base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-/* --- ESTILOS DE LA GALERÍA --- */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #000000;
+    color: #ffffff;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Navbar */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 1rem;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover {
+    color: #00bcd4;
+}
+
+.btn-contacto {
+    border: 1px solid #fff;
+    padding: 8px 20px;
+    border-radius: 20px;
+    transition: all 0.3s;
+}
+
+.btn-contacto:hover {
+    background: #fff;
+    color: #000 !important;
+}
+
+.container {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Galería de Scroll */
 .scroll-gallery {
     width: 100%;
-    min-height: 200vh;
+    min-height: 400vh;
     position: relative;
     overflow: hidden;
 }
@@ -28,34 +87,74 @@ body { font-family: 'Segoe UI', sans-serif; background: #000000; color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
-    /* Importante: necesitamos esto para que el texto absoluto se centre respecto a este contenedor */
-    position: relative; 
+    perspective: 1200px;
+    transform-style: preserve-3d;
 }
 
 .scroll-photo {
     position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100vh;
     object-fit: cover;
     opacity: 0;
-    z-index: 1; /* Las fotos están al fondo */
+    z-index: 1;
+    transform: translateZ(0px) scale(1);
+    will-change: opacity, transform;
 }
 
-/* Fíjate que puse una coma para aplicar estilos a LOS DOS textos a la vez */
+/* Textos flotantes */
 .floating-text, .floating-text-2 {
     position: absolute;
-    /* Nota: Quitamos top, left y transform de aquí. 
-       Se lo dejaremos a GSAP para que sea matemáticamente perfecto. */
-    
-    width: 100%; /* Asegura que ocupe el ancho para centrar el texto */
-    text-align: center; /* Centra las letras dentro del contenedor */
-    
-    font-size: 5rem;
+    width: 100%;
+    text-align: center;
+    font-size: clamp(2.2rem, 6vw, 5rem);
     font-weight: 900;
     text-transform: uppercase;
     color: #ffffff;
     text-shadow: 0 4px 20px rgba(0,0,0,0.7);
-    line-height: 1.1;
-    z-index: 10;
-    pointer-events: none; /* Para que puedas hacer scroll sobre el texto */
+    line-height: 1.05;
+    z-index: 20;
+    pointer-events: none;
+    will-change: opacity, transform;
+}
+
+/* Grid de Fotos */
+.photo-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    padding: 20px;
+    width: 100%;
+    height: 100vh;
+    background: #000;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.grid-left {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    height: 100%;
+}
+
+.grid-left img {
+    width: 100%;
+    height: calc(50% - 7.5px);
+    object-fit: cover;
+    opacity: 1;
+}
+
+.grid-right {
+    height: 100%;
+}
+
+.grid-right img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 1;
 }
