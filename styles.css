@@ -109,7 +109,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 15px;
-    height: 100%; /* Ocupa toda la altura del grid */
+    height: 60%; /* Ocupa toda la altura del grid */
 }
 
 .grid-left img {
