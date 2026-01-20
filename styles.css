@@ -1,9 +1,5 @@
 /* Reset y Base */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -16,91 +12,60 @@ body {
 /* Navbar */
 .navbar {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
+    top: 0; left: 0; width: 100%;
     padding: 20px 5%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    display: flex; justify-content: space-between; align-items: center;
     z-index: 1000;
     background: rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
+.logo { font-size: 1.5rem; font-weight: bold; color: #fff; }
+.nav-links { list-style: none; display: flex; gap: 30px; align-items: center; }
+.nav-links a { text-decoration: none; color: #fff; font-size: 1rem; transition: color 0.3s; }
+.nav-links a:hover { color: #00bcd4; }
+.btn-contacto { border: 1px solid #fff; padding: 8px 20px; border-radius: 20px; transition: all 0.3s; }
+.btn-contacto:hover { background: #fff; color: #000 !important; }
 
-.logo {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #fff;
-}
-
-.nav-links {
-    list-style: none;
-    display: flex;
-    gap: 30px;
-    align-items: center;
-}
-
-.nav-links a {
-    text-decoration: none;
-    color: #fff;
-    font-size: 1rem;
-    transition: color 0.3s;
-}
-
-.nav-links a:hover {
-    color: #00bcd4;
-}
-
-.btn-contacto {
-    border: 1px solid #fff;
-    padding: 8px 20px;
-    border-radius: 20px;
-    transition: all 0.3s;
-}
-
-.btn-contacto:hover {
-    background: #fff;
-    color: #000 !important;
-}
-
-.container {
-    width: 100%;
-    margin: 0;
-    padding: 0;
-}
+/* Contenedor Principal */
+.container { width: 100%; margin: 0; padding: 0; }
 
 /* Galería de Scroll */
 .scroll-gallery {
     width: 100%;
     min-height: 400vh;
     position: relative;
-    overflow: hidden;
+    overflow: hidden; /* Importante para que no se salga nada */
 }
 
+/* Wrapper que centra todo */
 .photo-wrapper {
     position: sticky;
     top: 0;
     width: 100%;
     height: 100vh;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: center;     /* Centra verticalmente */
+    justify-content: center; /* Centra horizontalmente */
     perspective: 1200px;
     transform-style: preserve-3d;
+    padding: 80px 20px 20px 20px; /* Padding arriba para que no choque con la navbar */
 }
 
+/* ESTILO DE FOTOS (Corrección del Zoom) */
 .scroll-photo {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    object-fit: cover;
+    /* En vez de llenar la pantalla, definimos un tamaño máximo */
+    width: 100%; 
+    max-width: 1400px; /* Ancho máximo para pantallas grandes */
+    height: 85vh;      /* Dejamos espacio para navbar y márgenes */
+    
+    object-fit: cover; /* Mantiene la proporción llenando el cuadro */
+    border-radius: 12px; /* Un borde suave queda mejor */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5); /* Sombra para profundidad */
+    
     opacity: 0;
     z-index: 1;
-    transform: translateZ(0px) scale(1);
     will-change: opacity, transform;
 }
 
@@ -113,51 +78,57 @@ body {
     font-weight: 900;
     text-transform: uppercase;
     color: #ffffff;
-    text-shadow: 0 4px 20px rgba(0,0,0,0.7);
+    text-shadow: 0 4px 20px rgba(0,0,0,0.8);
     line-height: 1.05;
     z-index: 20;
     pointer-events: none;
     will-change: opacity, transform;
 }
 
-/* Grid de Fotos */
+/* --- GRID DE FOTOS (Corrección de visualización) --- */
 .photo-grid {
     display: grid !important;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    padding: 16px;
-    width: min(90vw, 1200px);
-    height: min(90vh, 800px);
-    margin: 0 auto;
-    background: #000;
-    border-radius: 16px;
-    overflow: hidden;
-    position: absolute;
-    top: 0;
-    left: 0;
+    grid-template-columns: 1fr 1.5fr; /* La derecha un poco más ancha queda mejor, o 1fr 1fr */
+    gap: 15px;
+    
+    /* Importante: Hereda el tamaño de .scroll-photo, no lo fuerces a pantalla completa */
+    background: transparent; 
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+    
+    /* Centrado manual por si acaso */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) translateZ(0px) scale(1) !important; 
+    /* El transform será manejado por GSAP, pero esto centra el inicio */
 }
 
+/* Columna Izquierda (Las 2 fotos) */
 .grid-left {
     display: flex;
     flex-direction: column;
     gap: 15px;
-    height: 100%;
+    height: 100%; /* Ocupa toda la altura del grid */
 }
 
 .grid-left img {
     width: 100%;
-    height: calc(50% - 6px);
+    flex: 1; /* MAGIA: Esto obliga a las fotos a repartirse el espacio 50/50 exacto */
     object-fit: cover;
-    opacity: 1;
+    border-radius: 12px;
+    min-height: 0; /* Evita desbordes en flexbox */
 }
 
+/* Columna Derecha (La foto grande) */
 .grid-right {
     height: 100%;
+    display: flex; /* Para asegurar que la img ocupe todo */
 }
 
 .grid-right img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 1;
+    border-radius: 12px;
 }
