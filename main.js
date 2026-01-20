@@ -1,4 +1,3 @@
-// Registrar plugin ScrollTrigger
 gsap.registerPlugin(ScrollTrigger);
 
 // Seleccionar elementos
@@ -8,14 +7,14 @@ const text1 = document.querySelector(".floating-text");
 const text2 = document.querySelector(".floating-text-2");
 
 if (scrollGallery && photos.length > 0) {
-    // Asegurar que haya suficiente altura para scrollear (además del pin)
+    // Asegurar altura
     scrollGallery.style.minHeight = `${Math.max(3, photos.length + 1) * 100}vh`;
 
-    // Configuración inicial: solo la primera foto visible
+    // Configuración inicial de FOTOS
     gsap.set(photos, { opacity: 0, zIndex: 1, z: 0, scale: 1, transformOrigin: "50% 50%", force3D: true });
     gsap.set(photos[0], { opacity: 1, zIndex: 2 });
 
-    // Configuración inicial de textos (centrado perfecto)
+    // Configuración inicial de TEXTOS
     if (text1 || text2) {
         gsap.set([text1, text2], {
             left: "50%",
@@ -23,58 +22,91 @@ if (scrollGallery && photos.length > 0) {
             xPercent: -50,
             yPercent: -50,
             opacity: 0,
-            scale: 0.6,
+            scale: 0.8, // Empezamos un poco más grandes para que el efecto sea más sutil
             force3D: true
         });
     }
 
-    // Crear timeline con ScrollTrigger
+    // Timeline principal
     const tl = gsap.timeline({
         scrollTrigger: {
             trigger: scrollGallery,
             start: "top top",
             end: () => `+=${photos.length * 100}%`,
-            scrub: 1,
+            scrub: 1.5, // Aumenté un poco el scrub para que sea más suave al frenar
             pin: true,
             anticipatePin: 1
         }
     });
 
-    // Transiciones entre fotos
+    // Bucle de animaciones
     photos.forEach((photo, i) => {
         if (i === 0) return;
 
         const prevPhoto = photos[i - 1];
 
-        // Foto anterior: sale hacia el usuario (eje Z) y se desvanece
-        // Foto actual: aparece al mismo tiempo (sin botones, ligado al scroll)
+        // --- ANIMACIÓN DE FOTOS ---
         tl.to(prevPhoto, {
             zIndex: 1,
-            z: 450,
-            scale: 1.08,
+            z: 450, // Efecto 3D hacia el usuario
             opacity: 0,
-            duration: 1.5,
+            duration: 2, // Duración más larga para suavidad
             ease: "power2.inOut"
         })
         .fromTo(photo,
-            { zIndex: 2, opacity: 0, z: -150, scale: 0.98 },
-            { opacity: 1, z: 0, scale: 1, duration: 1.5, ease: "power2.inOut" },
-            "<"
+            { zIndex: 2, opacity: 0, z: -150, scale: 0.95 }, // Scale sutilmente menor
+            { opacity: 1, z: 0, scale: 1, duration: 2, ease: "power2.inOut" },
+            "<" // Empieza exactamente al mismo tiempo que la anterior se va
         );
 
-        // Textos flotantes (en algunas fotos)
-        // Nota: índices empiezan en 0. Ajustá si querés que aparezcan en otras.
+        // --- ANIMACIÓN DE TEXTOS (Corrección del parpadeo) ---
+        
+        // 1. TEXTO "Lucas Martin Maidana"
+        // Aparece en la Foto 2 (índice 1)
         if (i === 1 && text1) {
-            tl.to(text1, { opacity: 1, scale: 1.1, duration: 1.2, ease: "power2.out" }, "<");
+            tl.to(text1, { 
+                opacity: 1, 
+                scale: 1.1, 
+                duration: 2, 
+                ease: "power2.out",
+                overwrite: "auto" // CLAVE: Mata animaciones previas
+            }, "<+=0.1"); // Pequeño delay para no chocar con el inicio de la foto
         }
+        
+        // Desaparece al pasar a la Foto 3 (índice 2)
         if (i === 2 && text1) {
-            tl.to(text1, { opacity: 0, scale: 0.7, duration: 1.0, ease: "power2.in" }, "<");
+            tl.to(text1, { 
+                opacity: 0, 
+                scale: 0.8, 
+                duration: 1.5, // Un poco más rápido que la foto para irse limpio
+                ease: "power2.in",
+                overwrite: "auto"
+            }, "<"); // Se va junto con la foto
         }
+
+        // 2. TEXTO "Presupuesto Sin Cargo"
+        // Aparece en la Foto 5 (índice 4) - Ojo, ajusta este índice según dónde quieras que salga
+        // En tu HTML, la foto 5 es el Grid de la derecha, o la siguiente. 
+        // Si quieres que salga en el Grid, usa el índice correcto (el grid es un solo elemento .scroll-photo)
         if (i === 4 && text2) {
-            tl.to(text2, { opacity: 1, scale: 1.1, duration: 1.2, ease: "power2.out" }, "<");
+            tl.to(text2, { 
+                opacity: 1, 
+                scale: 1.1, 
+                duration: 2, 
+                ease: "power2.out",
+                overwrite: "auto"
+            }, "<+=0.1");
         }
-        if (i === 7 && text2) {
-            tl.to(text2, { opacity: 0, scale: 0.7, duration: 1.0, ease: "power2.in" }, "<");
+        
+        // Desaparece al pasar a la siguiente
+        if (i === 5 && text2) {
+            tl.to(text2, { 
+                opacity: 0, 
+                scale: 0.8, 
+                duration: 1.5, 
+                ease: "power2.in",
+                overwrite: "auto"
+            }, "<");
         }
     });
 }
